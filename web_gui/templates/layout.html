@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botnet</title>
+
+    <link rel="shortcut icon" href="http://www.example.com/myicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/navbar.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/footer.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/main.css') }}">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            prefix: 'tw-',
+            corePlugins: {
+                preflight: false,
+            },
+            theme: {
+                extend: {
+                    colors: {
+                        'text': '#e2eae1',
+                        'darker-text': '#c5c5c5',
+                        'background': '#020302',
+                        'primary': '#5e7282',
+                        'secondary': '#1d151e',
+                        'accent': '#947d6b',
+                        'card': '#101416',
+                    },
+                }
+            }
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='/js/navbar.js') }}"></script>
+    <script src="{{ url_for('static', filename='/js/toastr.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/toastr.css') }}">
+</head>
+<body>
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-custom navbar-mainbg tw-top-0">
+        <div style="width: 48px;"></div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <div class="hori-selector">
+                    <div class="left">
+                    </div>
+                    <div class="right">
+                    </div>
+                </div>
+                <li class="nav-item {{'active' if active_page == 'sessions' }}">
+                    <a class="nav-link" href="/sessions">Dashboard</a>
+                </li>
+                <li class="nav-item {{'active' if active_page == 'payloads' }}">
+                    <a class="nav-link" href="/payloads">Payload</a>
+                </li>
+                <li class="nav-item {{'active' if active_page == 'files' }}">
+                    <a class="nav-link" href="/files">Files</a>
+                </li>
+            </ul>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: row-reverse; justify-content: flex-start;">
+            <a class="logout-btn" href="/logout">
+                Log out
+            </a>
+        </div>
+    </nav>
+
+    <!-- body -->
+    <div class="tw-flex-1 tw-flex tw-flex-col body-main">
+        {% block body %}
+        {% endblock %}
+    </div>
+
+    <!-- footer -->
+    <footer>
+        <div class="footer-main">
+            <a class="github-link" href="https://github.com/wai157/botnet" target="_blank">
+                <img class="github-icon" src="{{ url_for('static', filename='/images/github.png') }}" alt="github">
+            </a>
+            <div>
+                <p>© 2023 Botnet</p>
+            </div>
+    </footer>
+</body>
+</html>
