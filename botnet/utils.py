@@ -28,7 +28,9 @@ def local_ip():
 
 
 def mac_address():
-    return ':'.join(hex(uuid.getnode()).strip('0x').strip('L')[i:i+2] for i in range(0,11,2)).upper()
+    mac_num = hex(uuid.getnode()).replace('0x', '').zfill(12)
+    mac = ':'.join(mac_num[i:i+2] for i in range(0, 11, 2)).upper()
+    return mac
 
 
 def username():

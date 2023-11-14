@@ -65,7 +65,7 @@
                             </th>
                             <th class="tw-text-background tw-text-center">IP Address</th>
                             <th class="tw-text-background tw-text-center">Username</th>
-                            <th class="tw-text-background tw-text-center">OS</th>
+                            <th class="tw-text-background tw-text-center">Mac Address</th>
                             <th class="tw-text-background tw-text-center">Status</th>
                         </tr>
                     </thead>
@@ -77,7 +77,7 @@
                                 </td>
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.public_ip }}</td>
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.username }}</td>
-                                <td class="tw-text-background tw-text-center tw-pt-2">{{ session.platform }}</td>
+                                <td class="tw-text-background tw-text-center tw-pt-2">{{ session.mac_address }}</td>
                                 <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}">
                                     {% if session.online %}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6">
