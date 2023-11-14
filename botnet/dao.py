@@ -59,7 +59,6 @@ class SessionDAO:
             session_dict['joined'] = datetime.utcnow()
 
         session_dict['online'] = True
-        session_dict['last_online'] = datetime.utcnow()
 
         session = self.get_session(session_dict['uid'])
 
@@ -80,7 +79,6 @@ class SessionDAO:
                 utils.log("User not found: " + session_dict['owner'])
         else:
             session.online = True
-            session.last_online = datetime.utcnow()
             db.session.commit()
 
         if session:

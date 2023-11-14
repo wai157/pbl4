@@ -5,8 +5,6 @@ import struct
 import socket
 import threading
 import collections
-from botnet.utils import *
-
 
 class Payload():
     def __init__(self, host='0.0.0.0', port=1337, **kwargs):

