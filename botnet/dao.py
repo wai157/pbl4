@@ -4,7 +4,7 @@ import hashlib
 from datetime import datetime
 
 from botnet.models import db, User, Session, Task, Payload, ExfiltratedFile
-from botnet.modules import utils
+from botnet import utils
 
 
 class UserDAO:

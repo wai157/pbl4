@@ -6,7 +6,7 @@ import requests
 import threading
 from datetime import datetime
 
-from botnet.modules import utils
+from botnet import utils
 
 class C2():
     def __init__(self, host='0.0.0.0', port=1337, debug=False):
