@@ -1,2 +1,5 @@
 *.pyc
 test.*
+*.db
+botnet/payloads
+botnet/executables

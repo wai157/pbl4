@@ -47,11 +47,6 @@ def session_cmd():
 	"""Send commands to clients and return the response."""
 	session_uid = request.form.get('session_uid')
 
-	# validate session uid is valid integer
-	if not session_uid:
-		flash("Invalid bot UID: " + str(session_uid))
-		return redirect(url_for('main.sessions'))
-
 	command = request.form.get('cmd')
 
 	# get user sessions

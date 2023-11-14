@@ -3,7 +3,7 @@ import os
 from flask import current_app, Blueprint, flash, redirect, render_template, request, url_for, send_from_directory
 from flask_login import current_user, login_required
 
-from web_gui.dao import file_dao, payload_dao, session_dao
+from botnet.dao import file_dao, payload_dao, session_dao
 from web_gui.utils import get_sessions_serialized, get_tasks_serialized
 
 # Blueprint
@@ -14,7 +14,6 @@ root = Blueprint('root', __name__)
 @root.route("/home")
 @root.route("/")
 def home():
-	"""Home page"""
 	if current_user.is_authenticated:
 		return redirect(url_for('root.sessions'))
 	else:
@@ -25,7 +24,6 @@ def home():
 @root.route("/sessions")
 @login_required
 def sessions():
-	"""Display active/inactive sessions"""
 	sessions = get_sessions_serialized(current_user.id)
 	return render_template("sessions.html", sessions=sessions, n=len(sessions))
 
@@ -33,8 +31,6 @@ def sessions():
 @root.route("/payloads")
 @login_required
 def payloads():
-	"""Page for creating custom client scripts. Custom client scripts are generated on this page by sending user inputed values to 
-	the '/generate' API endpoint, which writes the dropper to the user's output directory."""
 	payloads = payload_dao.get_user_payloads(current_user.id)
 	return render_template("payloads.html", 
 							payloads=payloads, 
@@ -44,7 +40,6 @@ def payloads():
 @root.route("/files")
 @login_required
 def files():
-	"""Page for displaying files exfiltrated from client machines"""
 	user_files = file_dao.get_user_files(current_user.id)
 	return render_template("files.html", 
 							files=user_files, 
@@ -73,7 +68,7 @@ def tasks():
 #
 #####################
 
-@root.route("/output/<user>/exe/<filename>")
+@root.route("/executables/<user>/exe/<filename>")
 @login_required
 def download_payload(user, filename):	
 	return send_from_directory(os.path.join(current_app.config['OUTPUT_DIR'], user, 'exe'), filename, as_attachment=True)

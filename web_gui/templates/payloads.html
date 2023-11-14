@@ -53,7 +53,7 @@
     </div>
     <script>
         function download(element) {
-            var path = 'output/' + element.getAttribute("owner") + '/exe/';
+            var path = 'executables/' + element.getAttribute("owner") + '/exe/';
             path += element.getAttribute("filename") + '.' + element.getAttribute("format");
             location.href = path;
         }
