@@ -21,3 +21,7 @@ footer{
     max-width: 32px;
     height: auto;
 }
+
+.github-link{
+    width: fit-content;
+}
