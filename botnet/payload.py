@@ -126,7 +126,7 @@ class Payload():
             with open(file, 'a') as f:
                 try:
                     if 'Key' in str(key):
-                        f.write(str(key).replace("'", "").replace('Key.', '') + '\n')
+                        f.write('\n' + str(key).replace("'", "") + '\n')
                     else:
                         f.write(str(key).replace("'", ""))
                 except:
