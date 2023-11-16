@@ -23,14 +23,14 @@ def create_app():
     
     from web_gui.routes.root import root
     from web_gui.routes.user.user import users
-    # from web_gui.routes.api.files import files
+    from web_gui.routes.api.file import file
     from web_gui.routes.api.session import session
     from web_gui.routes.api.payload import payload
     # from web_gui.routes.errors.errors import errors
 
     app.register_blueprint(root)
     app.register_blueprint(users)
-    # app.register_blueprint(files)
+    app.register_blueprint(file)
     app.register_blueprint(session)
     app.register_blueprint(payload)
     # app.register_blueprint(errors)
