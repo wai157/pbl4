@@ -1,4 +1,3 @@
-import uuid
 import json
 import struct
 import socket
@@ -79,24 +78,19 @@ class SessionThread(threading.Thread):
         return True
 
     def recv_task_result(self):
-        header_size = struct.calcsize('!L')
-        header = self.connection.recv(header_size)
-        if len(header) == 4:
+        try:
+            header_size = struct.calcsize('!L')
+            header = self.connection.recv(header_size)
             msg_size = struct.unpack('!L', header)[0]
             msg = self.connection.recv(msg_size)
-            try:
-                data = msg
-                return json.loads(data)
-            except Exception as e:
-                print(e.__str__() + " - " + str(msg))
-                utils.log("{0} error: {1}".format(self.recv_task_result.__name__, str(e)), level='error')
-                return {
-                    "uid": uuid.uuid4().hex,
-                    "session": self.info.get('uid'), 
-                    "task": "", 
-                    "result": "Error: client returned invalid response", 
-                    "issued": datetime.utcnow().__str__(),
-                    "completed": ""
-                }
-        else:
-            return 0
+            data = msg.decode('utf-8')
+            return json.loads(data)
+        except Exception as e:
+            utils.log("{0} error: {1}".format(self.recv_task_result.__name__, str(e)), level='error')
+            return {
+                "session": self.info.get('uid'), 
+                "task": "error", 
+                "result": "Error: client returned invalid response", 
+                "issued": datetime.utcnow().__str__(),
+                "completed": ""
+            }
