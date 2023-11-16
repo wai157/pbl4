@@ -91,6 +91,6 @@ class SessionThread(threading.Thread):
                 "session": self.info.get('uid'), 
                 "task": "error", 
                 "result": "Error: client returned invalid response", 
-                "issued": datetime.utcnow().__str__(),
+                "issued": datetime.utcnow(),
                 "completed": ""
             }
