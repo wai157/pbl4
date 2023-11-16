@@ -56,13 +56,13 @@ class SessionDAO:
         if not session_dict.get('uid'):
             identity = str(session_dict['mac_address'] + session_dict['owner']).encode()
             session_dict['uid'] = hashlib.md5(identity).hexdigest()
-            session_dict['joined'] = datetime.utcnow()
-
+        
         session_dict['online'] = True
 
         session = self.get_session(session_dict['uid'])
 
         if not session:
+            session_dict['joined'] = datetime.utcnow()
             user = self.user_dao.get_user(username=session_dict['owner'])
             if user:
                 sessions = user.sessions
