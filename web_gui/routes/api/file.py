@@ -13,7 +13,7 @@ def file_add():
     owner = request.form.get('owner')
     module = request.form.get('module')
     session = request.form.get('session')
-    filename = module + '_' + time.ctime(time.time()).replace(' ', '_').replace(':', '_')
+    filename = module + '_' + time.ctime(time.time()).replace(' ', '_').replace(':', '-')
 
     filename += '.' + filetype
 
@@ -26,8 +26,14 @@ def file_add():
         
     file_dao.add_user_file(owner, filename, session, module)
 
-    with open(os.path.join(os.path.abspath(output_path), filename), 'w') as f:
-        f.write(data)
+    if filetype == 'txt':
+        with open(os.path.join(os.path.abspath(output_path), filename), 'w') as f:
+            f.write(data)
+    elif filetype in ['png', 'jpg', 'jpeg', 'gif']:
+        uploaded_file = request.files.get('file')
+        uploaded_file.save(os.path.join(os.path.abspath(output_path), filename))
+        # with open(os.path.join(os.path.abspath(output_path), filename), 'wb') as f:
+        #     f.write(data)
         
     return "File saved successfully"
 

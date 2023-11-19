@@ -127,6 +127,8 @@
 				} else if ($('#' + action + '-stop').is(':checked')) {
 					params += 'stop';
 				}
+            } else if (action === 'screenshot') {
+                params += '';
             }
             else { 
                 toastr.info('Please select a module to execute');
