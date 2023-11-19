@@ -56,15 +56,15 @@
                 <header class="tw-text-xl tw-font-bold tw-text-text tw-pb-4">Sessions</header>
             </div>
             <div class="tw-h-80 tw-w-11/12 tw-bg-text tw-rounded tw-overflow-y-auto tw-m-5">
-                <table class="tw-table-fixed tw-w-full tw-p-0 tw-border-spacing-0">
+                <table class="tw-table-auto tw-w-full tw-p-0 tw-border-spacing-0">
                     <thead class="tw-sticky tw-top-0 tw-bg-darker-text">
                         <tr class="tw-h-10">
                             <th class="tw-text-background tw-text-center">
                                 <input type="checkbox" id="check-all">
                                 <label class="tw-px-2" for="check-all">Select all</label>
                             </th>
+                            <th class="tw-text-background tw-text-center">UID</th>
                             <th class="tw-text-background tw-text-center">IP Address</th>
-                            <th class="tw-text-background tw-text-center">Username</th>
                             <th class="tw-text-background tw-text-center">Mac Address</th>
                             <th class="tw-text-background tw-text-center">Status</th>
                         </tr>
@@ -75,8 +75,8 @@
                                 <td class="tw-text-background tw-text-center tw-pt-2">
                                     <input type="checkbox" id="chk-{{ session.uid }}" name="{{ session.uid }}" class="tw-m-2">
                                 </td>
+                                <td class="tw-text-background tw-text-center tw-pt-2">{{ session.uid }}</td>
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.public_ip }}</td>
-                                <td class="tw-text-background tw-text-center tw-pt-2">{{ session.username }}</td>
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.mac_address }}</td>
                                 <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}">
                                     {% if session.online %}

