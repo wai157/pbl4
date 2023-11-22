@@ -24,14 +24,14 @@
     </div>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <p id="error" hidden></p>
+            {% for message in messages %}
+                {% if 'ERROR' in message %}
+                    <script>
+                        toastr.error("{{ message }}");
+                    </script>
+                {% endif %}
+            {% endfor %}
         {% endif %}
     {% endwith %}
-    <script>
-        var error = document.getElementById("error");
-        if (error != null) {
-            toastr.error("Invalid username/password.");
-        }
-    </script>
 </body>
 </html>

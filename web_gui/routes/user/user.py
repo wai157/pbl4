@@ -23,7 +23,7 @@ def login():
 			login_user(user)
 			next_page = request.args.get('next')
 			return redirect(next_page or url_for('root.sessions'))
-		flash("Invalid username/password.")
+		flash("ERROR: Invalid username/password.")
 	return render_template("login.html", form=form, title="Log In")
 
 

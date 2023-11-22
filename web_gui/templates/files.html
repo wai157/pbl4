@@ -11,8 +11,8 @@
                 <table class="tw-table-auto tw-w-full tw-p-0 tw-border-spacing-0">
                     <thead class="tw-sticky tw-top-0 tw-bg-darker-text">
                         <tr class="tw-h-10">
-                            <th class="tw-text-background tw-text-center">Session</th>
-                            <th class="tw-text-background tw-text-center">File</th>
+                            <th class="tw-text-background tw-text-center"><input class="placeholder:tw-italic placeholder:tw-opacity-80 placeholder:tw-text-background tw-h-6 tw-w-72 tw-text-center tw-text-background" type="text" placeholder="Session" id="session"></th>
+                            <th class="tw-text-background tw-text-center"><input class="placeholder:tw-italic placeholder:tw-opacity-80 placeholder:tw-text-background tw-h-6 tw-w-80 tw-text-center tw-text-background" type="text" placeholder="File" id="file"></th>
                             <th class="tw-text-background tw-text-center">Download</th>
                         </tr>
                     </thead>
@@ -38,6 +38,20 @@
                 path += element.getAttribute("filename");
                 location.href = path;
             }
+        </script>
+        <script>
+            $('#session').on('input', function() {
+                var value = $(this).val().toLowerCase();
+                $('tbody tr').filter(function() {
+                    $(this).toggle($(this).children().first().text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            $('#file').on('input', function() {
+                var value = $(this).val().toLowerCase();
+                $('tbody tr').filter(function() {
+                    $(this).toggle($(this).children().first().next().text().toLowerCase().indexOf(value) > -1)
+                });
+            });
         </script>
     </div>
 {% endblock %}
