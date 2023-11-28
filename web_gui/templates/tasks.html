@@ -8,10 +8,10 @@
                 <header class="tw-text-xl tw-font-bold tw-text-text tw-pb-4">Tasks</header>
             </div>
             <div class="tw-w-11/12 tw-bg-text tw-rounded tw-overflow-y-auto tw-m-5" style="height: 32rem;">
-                <table class="tw-table-auto tw-w-full tw-p-0 tw-border-spacing-0">
+                <table class="tw-table-fixed tw-w-full tw-p-0 tw-border-spacing-0">
                     <thead class="tw-sticky tw-top-0 tw-bg-darker-text">
                         <tr class="tw-h-10">
-                            <th class="tw-text-background tw-text-center"><input class="placeholder:tw-italic placeholder:tw-opacity-80 placeholder:tw-text-background tw-h-6 tw-w-72 tw-text-center tw-text-background" type="text" placeholder="Session" id="session"></th>
+                            <th class="tw-w-80 tw-text-background tw-text-center"><input class="placeholder:tw-italic placeholder:tw-opacity-80 placeholder:tw-text-background tw-h-6 tw-w-72 tw-text-center tw-text-background" type="text" placeholder="Session" id="session"></th>
                             <th class="tw-text-background tw-text-center"><input class="placeholder:tw-italic placeholder:tw-opacity-80 placeholder:tw-text-background tw-h-6 tw-w-40 tw-text-center tw-text-background" type="text" placeholder="Task" id="task"></th>
                             <th class="tw-text-background tw-text-center"><input class="placeholder:tw-italic placeholder:tw-opacity-80 placeholder:tw-text-background tw-h-6 tw-w-40 tw-text-center tw-text-background" type="text" placeholder="Issued" id="issued"></th>
                             <th class="tw-text-background tw-text-center"><input class="placeholder:tw-italic placeholder:tw-opacity-80 placeholder:tw-text-background tw-h-6 tw-w-40 tw-text-center tw-text-background" type="text" placeholder="Completed" id="completed"></th>
@@ -33,28 +33,16 @@
             </div>
         </div>
         <script>
-            $('#session').on('input', function() {
-                var value = $(this).val().toLowerCase();
+            $('#session, #task, #issued, #completed').on('input', function() {
+                var value1 = $('#session').val().toLowerCase();
+                var value2 = $('#task').val().toLowerCase();
+                var value3 = $('#issued').val().toLowerCase();
+                var value4 = $('#completed').val().toLowerCase();
                 $('tbody tr').filter(function() {
-                    $(this).toggle($(this).children().first().text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-            $('#task').on('input', function() {
-                var value = $(this).val().toLowerCase();
-                $('tbody tr').filter(function() {
-                    $(this).toggle($(this).children().first().next().text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-            $('#issued').on('input', function() {
-                var value = $(this).val().toLowerCase();
-                $('tbody tr').filter(function() {
-                    $(this).toggle($(this).children().first().next().next().text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-            $('#completed').on('input', function() {
-                var value = $(this).val().toLowerCase();
-                $('tbody tr').filter(function() {
-                    $(this).toggle($(this).children().first().next().next().next().text().toLowerCase().indexOf(value) > -1)
+                    $(this).toggle($(this).children().first().text().toLowerCase().indexOf(value1) > -1 &&
+                                   $(this).children().first().next().text().toLowerCase().indexOf(value2) > -1 &&
+                                   $(this).children().first().next().next().text().toLowerCase().indexOf(value3) > -1 &&
+                                   $(this).children().first().next().next().next().text().toLowerCase().indexOf(value4) > -1)
                 });
             });
         </script>
