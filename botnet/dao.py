@@ -102,12 +102,19 @@ class SessionDAO:
 
 
 class TaskDAO:
-    def __init__(self, model, session_dao):
+    def __init__(self, model, session_dao, user_dao):
         self.model = model
         self.session_dao = session_dao
+        self.user_dao = user_dao
 
     def get_task(self, task_uid):
         return db.session.query(self.model).filter_by(uid=task_uid).first()
+    
+    def get_user_tasks(self, user_id):
+        user = self.user_dao.get_user(user_id=user_id)
+        if user:
+            return user.tasks
+        return []
 
     def get_session_tasks(self, session_uid):
         session = session_dao.get_session(session_uid)
@@ -178,6 +185,6 @@ class PayloadDAO:
 
 user_dao = UserDAO(User)
 session_dao = SessionDAO(Session, user_dao)
-task_dao = TaskDAO(Task, session_dao)
+task_dao = TaskDAO(Task, session_dao, user_dao)
 payload_dao = PayloadDAO(Payload, user_dao)
 file_dao = FileDAO(ExfiltratedFile, user_dao)

@@ -46,14 +46,12 @@ def files():
 							owner=current_user.username)
 
 
-@root.route("/tasks", methods=["GET"])
+@root.route("/tasks")
 @login_required
 def tasks():
-	tasks = get_tasks_serialized(session_uid)
+	tasks = get_tasks_serialized(current_user.id)
 	return render_template("tasks.html", 
-							tasks=tasks, 
-							session_uid=session_uid,
-							title="Tasks")
+							tasks=tasks[::-1])
 
 
 #####################

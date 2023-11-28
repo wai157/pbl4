@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
 	sessions = db.relationship('Session', backref='creator', lazy=True)
 	payloads = db.relationship('Payload', backref='creator', lazy=True)
 	files = db.relationship('ExfiltratedFile', backref='creator', lazy=True)
+	tasks = db.relationship('Task', backref='creator', lazy=True)
 
 	def __repr__(self):
 		return "User('{}')".format(self.username)
@@ -59,6 +60,7 @@ class Task(db.Model):
 	issued = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
 	completed = db.Column(db.DateTime)
 	session = db.Column(db.String(32), db.ForeignKey('session.uid'), nullable=False)
+	issued_by = db.Column(db.String(32), db.ForeignKey('user.username'), nullable=False)
 
 	def __repr__(self):
 		return "Task('{0}', '{1}')".format(self.id, self.task)
@@ -70,7 +72,9 @@ class Task(db.Model):
 			"task": self.task,
 			"result": self.result,
 			"issued": self.issued.__str__(),
-			"completed": self.completed.__str__()
+			"completed": self.completed.__str__(),
+			"session": self.session,
+			"issued_by": self.issued_by
 		}
 
 class Payload(db.Model):
