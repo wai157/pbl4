@@ -18,6 +18,9 @@ def log(info, level='debug'):
     
     getattr(logger, level if hasattr(logger, level) else 'debug')(str(info))
 
+def computer_name():
+    return os.getenv('COMPUTERNAME', 'unknown')
+
 
 def public_ip():
     return urlopen('http://api.ipify.org').read().decode()

