@@ -16,7 +16,7 @@ def file_add():
     filename = module + '_' + time.ctime(time.time()).replace(' ', '_').replace(':', '-')
 
     filename += '.' + filetype
-
+    session = session.replace(' ', '_').replace(':', '-')
     output_path = os.path.join('botnet/exfiltratedfiles', owner, session)
     if not os.path.isdir(output_path):
         try:

