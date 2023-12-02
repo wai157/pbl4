@@ -28,11 +28,13 @@ class Session(db.Model):
 	uid = db.Column(db.String(32), primary_key=True, unique=True, nullable=False)
 	online = db.Column(db.Boolean, nullable=False)
 	joined = db.Column(db.DateTime, nullable=False)
+	computer_name = db.Column(db.String(120))
 	public_ip = db.Column(db.String(42))
 	local_ip = db.Column(db.String(42))
 	mac_address = db.Column(db.String(17))
 	username = db.Column(db.String(32))
 	new = db.Column(db.Boolean, default=True, nullable=False)
+	running = db.Column(db.Integer, default=0, nullable=False)
 	owner = db.Column(db.String(120), db.ForeignKey('user.username'), nullable=False)
 	tasks = db.relationship('Task', backref='issuer', lazy=True)
 
@@ -45,10 +47,12 @@ class Session(db.Model):
 			"uid": self.uid,
 			"online": self.online,
 			"joined": self.joined.__str__(),
+			"computer_name": self.computer_name,
 			"public_ip": self.public_ip,
 			"local_ip": self.local_ip,
 			"mac_address": self.mac_address,
 			"username": self.username,
+			"running": self.running,
 			"owner": self.owner
 		}
 

