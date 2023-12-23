@@ -87,7 +87,7 @@ class SessionThread(threading.Thread):
             return json.loads(data)
         except Exception as e:
             utils.log("{0} error: {1}".format(self.recv_task_result.__name__, str(e)), level='error')
-            self.connection.settimeout(0.1)  
+            self.connection.settimeout(0.2)  
             try:
                 while True:
                     self.connection.recv(4096) 
