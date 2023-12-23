@@ -17,30 +17,6 @@ def session_new():
 	session_metadata = session_dao.handle_session(data)
 	return jsonify(session_metadata)
 
-@session.route("/remove", methods=["POST"])
-@login_required
-def session_remove():
-	"""End an active session."""
-	session_uid = request.form.get('session_uid')
-
-	if not session_uid:
-		flash('Invalid session UID', 'danger')
-		return redirect(url_for('root.sessions'))
-
-	# kill connection to C2
-	owner_sessions = c2.sessions.get(current_user.username, {})
-
-	if session_uid and session_uid in owner_sessions:
-		session_thread = owner_sessions[session_uid]
-		try:
-			session_thread.kill()
-		except Exception as e:
-			return "Error ending session - please try again."
-
-	# remove session from database
-	s = session_dao.delete_session(session_uid)
-	return "Session {} removed.".format(session_uid)
-
 @session.route("/cmd", methods=["POST"])
 @login_required
 def session_cmd():
