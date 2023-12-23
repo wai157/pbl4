@@ -235,7 +235,7 @@ class Payload():
             msg_size = struct.unpack('!L', header)[0]
             msg = self.connection.recv(msg_size)
             data = msg.decode('utf-8')
-            self.connection.settimeout(0.2)  
+            self.connection.settimeout(0.1)  
             try:
                 while True:
                     self.connection.recv(4096) 

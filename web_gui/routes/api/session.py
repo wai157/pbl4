@@ -42,7 +42,7 @@ def session_cmd():
 			# update task record with result in database
 			result = task_dao.handle_task(response)
 			return str(result['result'])
-		except Exception as e:
+		except Exception:
 			session_dao.update_session_status(session_uid, False)
 			_ = owner_sessions.pop(session_uid, None)
 			return "offline"
