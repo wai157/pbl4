@@ -69,13 +69,15 @@ class SessionThread(threading.Thread):
         return info
 
     def send_task(self, task):
-        if not isinstance(task, dict):
-            raise TypeError('task must be a dictionary object')
-        data = json.dumps(task)
-        msg  = struct.pack('!L', len(data)) + data.encode('utf-8')
-
-        self.connection.sendall(msg)
-        return True
+        try:
+            data = json.dumps(task)
+            msg  = struct.pack('!L', len(data)) + data.encode('utf-8')
+            self.connection.sendall(msg)
+            return True
+        except Exception as e:
+            self.connection.close()
+            utils.log("Error sending task: {}".format(str(e)), level='error')
+            raise Exception
 
     def recv_task_result(self):
         try:
@@ -88,8 +90,10 @@ class SessionThread(threading.Thread):
             self.connection.settimeout(None)
             return json.loads(data)
         except socket.timeout:
+            self.connection.close()
             raise socket.timeout
         except Exception as e:
+            self.connection.close()
             utils.log("{0} error: {1}".format(self.recv_task_result.__name__, str(e)), level='error')
             return {
                 "session": self.info.get('uid'), 
