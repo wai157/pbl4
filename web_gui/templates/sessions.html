@@ -162,13 +162,13 @@
                                 keylogger_icon.attr('stroke', 'gray');
                                 ddos_icon.attr('fill', 'gray');
                             }
-                            if (response === "Keylogger started") {
+                            if (response === "Keylogger started" || response === "Keylogger already running") {
                                 keylogger_icon.attr('stroke', 'green');
                             }
                             if (response === "Keylogger stopped" || response === "Keylogger not running") {
                                 keylogger_icon.attr('stroke', 'gray');
                             }
-                            if (response === "DDoS attack started") {
+                            if (response === "DDoS attack started" || response === "DDoS attack already running") {
                                 ddos_icon.attr('fill', 'green');
                             }
                             if (response === "DDoS attack stopped" || response === "DDoS attack not running") {
